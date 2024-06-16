@@ -86,40 +86,66 @@ class VideoPlayer(tk.Tk):
 
     def play(self):
         cap = cv2.VideoCapture()
+        audio_player = None
         
         while not self.stop_flag.is_set():
             video = self.video_files[self.current_video_index]
             filepath = os.path.join(self.folder, video)
             cap.open(filepath)
+            probe = ffmpeg.probe(filepath)
+            video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+            audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+            if audio_stream:
+                audio_args = {
+                    'i': filepath,
+                    'vn': None,  # 不输出视频
+                    'acodec': 'pcm_s16le',  # 音频编码，选择无损编码保证质量
+                    'f': 's16le',  # 格式
+                    'ar': str(audio_stream['sample_rate']),  # 采样率
+                    'ac': str(audio_stream['channels']),  # 声道数
+                }
+                # 创建音频管道
+                audio_process = (
+                    ffmpeg.input(**{'i': filepath})
+                    .output('-', **{'acodec': 'pcm_s16le', 'f': 's16le'})
+                    .overwrite_output()
+                    .run_async(pipe_stdout=True, pipe_stderr=True)
+                )
+                audio_player = audio_process.stdout
             
+            cap.open(filepath)   
             frame_rate = cap.get(cv2.CAP_PROP_FPS)
             delay = int(1000 / (frame_rate * self.speed))
-            
-            while cap.isOpened() and not self.stop_flag.is_set():
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                self.current_position += 1 / (frame_rate * self.speed)  # 调整进度更新以适应播放速度
-                self.update_progress()                
+            if audio_player:
+                while cap.isOpened() and not self.stop_flag.is_set():
+                    ret, frame = cap.read()
+                    if not ret:
+                        break
+                    self.current_position += 1 / (frame_rate * self.speed)  # 调整进度更新以适应播放速度
+                    self.update_progress()                
                 
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame)
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    img = Image.fromarray(frame)
                 
-                # Resize frame according to both resolution and scale
-                width, height = map(int, self.resolution.split('x'))
-                img = img.resize((int(width * self.scale), int(height * self.scale)), Image.ANTIALIAS)
+                    # Resize frame according to both resolution and scale
+                    width, height = map(int, self.resolution.split('x'))
+                    img = img.resize((int(width * self.scale), int(height * self.scale)), Image.ANTIALIAS)
                 
-                imgtk = ImageTk.PhotoImage(image=img)
-                self.canvas.create_image(0, 0, anchor=tk.NW, image=imgtk)
-                self.canvas.imgtk = imgtk  # Store reference to avoid garbage collection
+                    imgtk = ImageTk.PhotoImage(image=img)
+                    self.canvas.create_image(0, 0, anchor=tk.NW, image=imgtk)
+                    self.canvas.imgtk = imgtk  # Store reference to avoid garbage collection
                 
-                self.update_idletasks()
-                self.after(delay)
-                
-                if self.current_position >= self.total_duration:
-                    break
-            
-            cap.release()
+                    self.update_idletasks()
+                    self.after(delay)
+                    # 播放音频数据
+                    audio_chunk = audio_player.read(4096)  # 读取音频数据块
+                    if audio_chunk:
+                        pass
+                    if self.current_position >= self.total_duration:
+                        break
+                if audio_player:
+                    audio_player.close()
+                cap.release()
             
             if self.current_video_index < len(self.video_files) - 1:
                 self.current_video_index += 1
