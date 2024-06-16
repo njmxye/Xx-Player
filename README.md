@@ -2,7 +2,7 @@
 ## 让多视频播放从未如此有趣又便捷！
 ## 🎥 Your Personal Cinema in a GUI! 🎞️🎉
 
-🌈 欢迎来到 Multi-Animal Video Jamboree —— 一个俏皮又强大的多视频播放器，旨在用代码魔法将你的视频库变为欢乐的视觉盛宴！无论是猫咪的日常、狗狗的冒险还是小兔子的跳跃，只需轻轻一点，它们就能在你的屏幕上轮番上演🎉。
+🌈 欢迎来到 Xx-Player Video Jamboree —— 一个俏皮又强大的多视频播放器，旨在用代码魔法将你的视频库变为欢乐的视觉盛宴！无论是猫咪的日常、狗狗的冒险还是小兔子的跳跃，只需轻轻一点，它们就能在你的屏幕上轮番上演🎉。
 
 ## 📹 功能特性
 多视频自动播放 🎞️: 自动检测并排序文件夹中的所有视频，不间断播放，让你一次看个够。
@@ -18,7 +18,7 @@ ffmpeg 探针技术，精确计算视频时长，确保播放无缝衔接。
 ## 🌈 快速开始
 克隆本仓库 📦:
 '''bash
-   git clone https://github.com/YOUR_USERNAME/Multi-Animal-Video-Jamboree.git
+   git clone https://github.com/njmxye/Xx-Player.git
 '''
 选择视频文件夹 📁: 运行 app.py，选择包含视频的文件夹，然后就坐享视觉盛宴吧！
 
@@ -30,4 +30,4 @@ ffmpeg 探针技术，精确计算视频时长，确保播放无缝衔接。
 跨平台适配 🌐: 完善 Windows、Mac 以及 Linux 平台下的兼容性。
 云同步功能 🌩️: 云端存储视频列表，随时随地续播你的最爱。
 
-准备好与我们一起踏上这场视频狂欢之旅了吗？那就快快行动起来，让 Multi-Animal Video Jamboree 成为你日常娱乐的好伙伴吧！🌈
+准备好与我们一起踏上这场视频狂欢之旅了吗？那就快快行动起来，让 Xx-Player Video Jamboree 成为你日常娱乐的好伙伴吧！🌈
